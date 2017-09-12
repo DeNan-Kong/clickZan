@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>模仿手机qq点赞功能</title>
+	<script src="jquery-1.11.3.min.js"></script>
+	<style>
+		*{
+			margin:0;
+			padding:0;
+		}
+		.t_c{
+			text-align: center;
+		}
+		img{
+			max-width: 100%;
+			max-height: 100%;
+		}
+		.saying_zan_box{
+		    position: absolute;
+		    right:45%;
+		    bottom:40%;
+		    width: 30px;
+		    cursor: pointer;
+		}
+		.imgAll{
+		    position: absolute;
+		    right:20px;
+		    bottom:45px;
+		    width: 30px;
+		    z-index: 9999;
+		}
+	</style>
+</head>
+<body>
+	 <div class="saying_zan_box">
+        <img data-limit="0" class="saying_zan" src="img/7.png" alt="">
+        <p class="t_c js_zan_num">0</p>
+    </div>
+</body>
+
+	<script>
+		
+	var imgSrc = 'img/';//图片路径
+    var srcArr = ['1.png','2.png','3.png','4.png','5.png','6.png','7.png'];//图片名称
+    //初始化
+    init()
+    // 初始化方法
+    function init(){
+         // 事件处理
+        var eventType;
+        var isHaveTouch = "ontouchend" in document ? true : false;
+        if(isHaveTouch){
+            eventType = 'touchstart';
+        }else{
+            eventType = 'click';
+        }
+        var maxNum = 10;//设置点赞次数
+        $(document).delegate(".saying_zan",eventType,function(){
+            var limit = $(this).attr('data-limit');
+            var htmlNumber = parseInt($(this).next().html());
+            limit > maxNum ? maxNum : limit++;
+            if( limit <= maxNum){
+                htmlNumber++;
+                $(this).attr('data-limit',limit);
+                $(this).next().html(htmlNumber);
+                createImg(this, limit );
+            }
+            if( limit == maxNum){
+                $(this).attr("src",imgSrc+"1.png");
+            }
+        })
+    }
+    function createImg(self, num ){
+        var randomNum = Math.floor(Math.random()*srcArr.length+1);
+        var oImg = new Image();
+        oImg.src = imgSrc + randomNum + ".png";
+        oImg.className = "imgAll";
+        $(self).parent().append(oImg);
+        sport(oImg)
+    }
+    function sport( dom ){
+        var speedX = Math.random()*2+1;
+        var speedY = Math.random()*2+1;
+        var L ;
+        var T ;
+        var timer = setInterval(function(){
+            T = parseInt($(dom).css("bottom"));
+            L = parseInt($(dom).css("right"));
+            saveL = parseInt($(dom).css("right"));
+            L+= speedX;
+            T += speedY;
+            $(dom).css("right",L);
+            $(dom).css("bottom",T);
+            if(T > $(dom).offset().top){
+                $(dom).remove();
+                clearInterval(timer)
+            }
+
+        },20)
+        $(dom).animate({
+            'opacity':0
+        },10*parseInt($(dom).offset().top) + 500)
+    }
+	</script>
+</html>
